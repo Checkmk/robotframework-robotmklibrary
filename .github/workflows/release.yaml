@@ -1,0 +1,52 @@
+---
+  name: "Release"
+  on:
+    workflow_dispatch:
+      inputs:
+        tag:
+          description: >
+            Tag set by this GitHub workflow.
+            Should follow SemVer and is not allowed to exist already.
+          required: true
+          type: string
+  
+  jobs:
+    tests:
+      uses: ./.github/workflows/tests.yaml
+
+    release:
+      runs-on: ubuntu-latest
+      needs: [tests]
+      steps:
+        - uses: actions/checkout@v4
+
+        - uses: actions/setup-python@v5
+          with:
+            python-version-file: "pyproject.toml"
+
+        - run: python3 -m pip install poetry
+
+        - run: poetry build
+  
+        - run: tar --create --gzip --verbose --file dist.tar.gz dist
+  
+        - name: "Push release tag"
+          # This is publicly visible and needs to be manually fixed if any
+          # consecutive step fails.
+          run: |
+            git tag ${{ inputs.tag }}  # Fails, if tag exists.
+            git push origin ${{ inputs.tag }}
+  
+        - uses: ncipollo/release-action@v1.13.0
+          with:
+            allowUpdates: false
+            artifacts: "dist.tar.gz"
+            replacesArtifacts: true
+            removeArtifacts: true
+            prerelease: true
+            draft: true
+            body: ""
+            artifactErrorsFailBuild: true
+            updateOnlyUnreleased: true
+            makeLatest: false
+            tag: ${{ inputs.tag }}
