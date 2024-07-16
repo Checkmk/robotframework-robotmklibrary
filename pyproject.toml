@@ -6,6 +6,7 @@ authors = ["Jörg Herbel <joerg.herbel@checkmk.com>"]
 packages = [
     { include = "RobotmkLibrary" },
 ]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"  # "^3" would be sufficient for our code, but fails to resolve
