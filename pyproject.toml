@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "robotframework-robotmklibrary"
-version = "0.0.2"
+version = "0.0.1"
 description = "A Robot Framework keyword library intended to be used with Robotmk."
 authors = ["Jörg Herbel <joerg.herbel@checkmk.com>"]
 packages = [
