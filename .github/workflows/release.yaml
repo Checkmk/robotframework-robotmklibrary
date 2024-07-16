@@ -1,3 +1,6 @@
+# Note: The name of this file and the name of the used environment must match the Trusted Publisher
+# configuration on PyPI.
+
 ---
   name: "Release"
   on:
@@ -16,6 +19,9 @@
 
     release:
       runs-on: ubuntu-latest
+      environment: release
+      permissions:
+        id-token: write
       needs: [tests]
       steps:
         - uses: actions/checkout@v4
@@ -50,3 +56,5 @@
             updateOnlyUnreleased: true
             makeLatest: false
             tag: ${{ inputs.tag }}
+
+        - uses: pypa/gh-action-pypi-publish@release/v1
