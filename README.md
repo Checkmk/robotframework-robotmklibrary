@@ -1,1 +1,1 @@
-A keyword library for Robot Framework inteded to be used in combination with Robotmk.
+A keyword library for Robot Framework intended to be used in combination with Robotmk.
