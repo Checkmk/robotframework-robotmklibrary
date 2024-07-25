@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "robotframework-robotmklibrary"
-version = "0.0.2"
+version = "0.0.3"
 description = "A Robot Framework keyword library intended to be used with Robotmk."
 authors = ["Jörg Herbel <joerg.herbel@checkmk.com>"]
 packages = [
@@ -9,7 +9,7 @@ packages = [
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"  # "^3" would be sufficient for our code, but fails to resolve
+python = "^3.8"  # anything lower than 3.8 fails to resolve
 
 [tool.poetry.group.dev]
 optional = true
