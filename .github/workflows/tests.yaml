@@ -10,23 +10,26 @@ jobs:
 
     strategy:
       matrix:
-        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python_version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
 
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v5
       with:
+        version: "latest"
         python-version: ${{ matrix.python_version }}
 
-    - run: python3 -m pip install poetry
+    - run: uv sync
 
-    - run: poetry install --with dev
+    - run: uv run ruff format --diff
 
-    - run: poetry run black --check ./
+    - run: uv run ruff check
 
-    - run: poetry run isort --check-only ./
-
-    - run: poetry run mypy ./
-
-    - run: poetry run pylint RobotmkLibrary/
+    - run: uv run mypy src
