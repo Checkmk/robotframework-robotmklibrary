@@ -19,21 +19,21 @@
       steps:
         - uses: actions/checkout@v4
 
-        - uses: actions/setup-python@v5
+        - uses: astral-sh/setup-uv@v5
           with:
-            python-version-file: "pyproject.toml"
+            version: "latest"
 
-        - run: python3 -m pip install poetry
+        - run: uv sync
 
-        - run: poetry build
+        - run: uv build
   
         - run: tar --create --gzip --verbose --file dist.tar.gz dist
 
         - name: "Set release according to package version"
           id: compute-tag
           run: |
-            version="$(poetry version | cut --delimiter " " --fields 2)"
-            echo "TAG=v${version}" >> "${GITHUB_OUTPUT}"
+            version="$(uv tree | grep --regexp "^robotframework-robotmklibrary v.*" | cut --delimiter " " --fields 2)"
+            echo "TAG=${version}" >> "${GITHUB_OUTPUT}"
 
         - name: "Push release tag"
           # This is publicly visible and needs to be manually fixed if any
@@ -42,7 +42,7 @@
             git tag ${{ steps.compute-tag.outputs.TAG }} # Fails, if tag exists.
             git push origin ${{ steps.compute-tag.outputs.TAG }}
   
-        - uses: ncipollo/release-action@v1.13.0
+        - uses: ncipollo/release-action@v1
           with:
             allowUpdates: false
             artifacts: "dist.tar.gz"

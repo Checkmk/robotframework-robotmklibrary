@@ -1,27 +1,23 @@
-[tool.poetry]
+[project]
 name = "robotframework-robotmklibrary"
-version = "0.0.3"
+version = "0.0.4"
 description = "A Robot Framework keyword library intended to be used with Robotmk."
-authors = ["Jörg Herbel <joerg.herbel@checkmk.com>"]
-packages = [
-    { include = "RobotmkLibrary" },
-]
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.8"  # anything lower than 3.8 fails to resolve
-
-[tool.poetry.group.dev]
-optional = true
-[tool.poetry.group.dev.dependencies]
-mypy = "*"
-black = "*"
-isort = "*"
-pylint = "*"
+authors = [
+    { name = "Jörg Herbel", email = "joerg.herbel@checkmk.com" }
+]
+requires-python = ">=3.8"
+dependencies = []
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.14.1",
+    "ruff>=0.9.1",
+]
 
 [tool.mypy]
 strict = true
@@ -33,6 +29,5 @@ enable_error_code = [
 disallow_any_expr = true
 disallow_any_explicit = true
 
-
-[tool.isort]
-profile = "black"
+[tool.hatch.build.targets.wheel]
+packages = ["src/RobotmkLibrary"]

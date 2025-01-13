@@ -1,9 +1,8 @@
-# pylint: disable=invalid-name, missing-module-docstring
 import logging
 from typing import Optional
 
 
-def monitor_subsequent_keyword_runtime(  # pylint: disable=missing-function-docstring
+def monitor_subsequent_keyword_runtime(
     *,
     discover_as: Optional[str] = None,
 ) -> None:
