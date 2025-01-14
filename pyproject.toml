@@ -19,6 +19,18 @@ dev = [
     "ruff>=0.9.1",
 ]
 
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",
+    "D103",
+    "D104",
+    "D203",
+    "D213",
+    "E501",
+    "N999",
+]
+
 [tool.mypy]
 strict = true
 enable_error_code = [
