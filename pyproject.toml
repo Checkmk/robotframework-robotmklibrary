@@ -7,7 +7,9 @@ authors = [
     { name = "Jörg Herbel", email = "joerg.herbel@checkmk.com" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "robotframework>=7.5.1",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -16,6 +18,7 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "mypy>=2.4.1",
+    "pytest>=9.2",
     "ruff>=0.17.3",
 ]
 
@@ -30,6 +33,9 @@ ignore = [
     "TC",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["PLR2004", "S101"]
+
 [tool.mypy]
 strict = true
 enable_error_code = [
@@ -39,6 +45,21 @@ enable_error_code = [
 ]
 disallow_any_expr = true
 disallow_any_explicit = true
+# Calls into these packages are untyped at their end, not ours.
+untyped_calls_exclude = ["robot"]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+# Robot Framework and the SDK hand the tests Any-typed values (run results, span ids).
+disallow_any_expr = false
+
+[[tool.mypy.overrides]]
+module = "robot.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error::UserWarning"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/RobotmkLibrary"]
