@@ -7,6 +7,15 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "asgiref"
+version = "3.13.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6b/90/f5fce14e95fccf53b58e8e2c47cd84d40d105d64073ae1ac75166db150e0/asgiref-3.13.0.tar.gz", hash = "sha256:034cc8cbf72d00553b4be256703ac545120b4e50af13b49dec99da899aeeecb4", size = 52941, upload-time = "2026-10-23T08:13:14.715Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2e/b0/ec211e1f7966247cb6469158d856bac9aa4c2fe13621bd6a352e4f850453/asgiref-3.13.0-py3-none-any.whl", hash = "sha256:f9596a2434512686473d50f96ff6207fbba49ae1a785dfac614df4aeb085674d", size = 27593, upload-time = "2026-10-23T08:13:13.394Z" },
+]
+
+[[package]]
 name = "ast-serialize"
 version = "0.13.1"
 source = { registry = "https://pypi.org/simple" }
@@ -563,6 +572,21 @@ wheels = [
 ]
 
 [[package]]
+name = "opentelemetry-test-utils"
+version = "0.66b2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asgiref" },
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-sdk" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d6/01/dfbb87514605e1e507835eeba2912e4768cf26d61d82ea6739a2aa00c159/opentelemetry_test_utils-0.66b2.tar.gz", hash = "sha256:96097e80256e2c03e2d69370c89d5d93ca3b787261c784fb4f27b9e9a1e6e389", size = 15940, upload-time = "2026-10-29T17:29:56.472Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6b/6b/ad031dae48f40d7a3b230d6ed7e44e92e2bcd90ba309926272a0c78df823/opentelemetry_test_utils-0.66b2-py3-none-any.whl", hash = "sha256:508745f25e2a0292b67f41eb71e59d2cf46a110e09293e5cd00a7ffdc1a7e04f", size = 21475, upload-time = "2026-10-29T17:29:36.399Z" },
+]
+
+[[package]]
 name = "packaging"
 version = "26.3"
 source = { registry = "https://pypi.org/simple" }
@@ -666,6 +690,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "mypy" },
+    { name = "opentelemetry-test-utils" },
     { name = "pytest" },
     { name = "ruff" },
 ]
@@ -680,6 +705,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "mypy", specifier = ">=2.4.1" },
+    { name = "opentelemetry-test-utils", specifier = ">=0.66b2" },
     { name = "pytest", specifier = ">=9.2" },
     { name = "ruff", specifier = ">=0.17.3" },
 ]
