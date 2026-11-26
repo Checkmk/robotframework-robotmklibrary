@@ -30,6 +30,7 @@ PNG = (
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk"
     "YAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 )
+JPEG = "/9j/4AAQSkZJRg=="
 SELENIUM_SCREENSHOT = (
     '</td></tr><tr><td colspan="3"><img alt="screenshot" class="robot-seleniumlibrary-screenshot" '
     f'src="data:image/png;base64,{PNG}" width="800px">'
@@ -574,8 +575,8 @@ def test_log_bodies_are_cut_at_max_log_length() -> None:
             id="file based stays html",
         ),
         pytest.param(
-            f'Before <img src="data:image/jpeg;base64,{PNG}"> after',
-            [(PNG, {**PNG_LOG_ATTRIBUTES, "rf.log.image": "image/jpeg"})],
+            f'Before <img src="data:image/jpeg;base64,{JPEG}"> after',
+            [(JPEG, {**PNG_LOG_ATTRIBUTES, "rf.log.image": "image/jpeg"})],
             id="text around the image is dropped",
         ),
         pytest.param(
@@ -604,6 +605,57 @@ def test_embedded_screenshots_become_image_records(
         (item.log_record.body, dict(item.log_record.attributes or {}))
         for item in listener.logs.get_finished_logs()
     ] == records
+
+
+@pytest.mark.parametrize(
+    ("media_type", "payload", "reason"),
+    [
+        pytest.param(
+            "image/svg+xml",
+            "PHN2Zy8+",
+            "unsupported media type image/svg+xml",
+            id="svg",
+        ),
+        pytest.param(
+            "image/gif", "R0lGODlh", "unsupported media type image/gif", id="gif"
+        ),
+        pytest.param(
+            "image/png", "not base64!", "payload is not base64", id="not base64"
+        ),
+        pytest.param(
+            "image/jpeg",
+            PNG,
+            "payload is not an image/jpeg image",
+            id="png labelled jpeg",
+        ),
+        pytest.param(
+            "image/png",
+            JPEG,
+            "payload is not an image/png image",
+            id="jpeg labelled png",
+        ),
+    ],
+)
+def test_an_invalid_screenshot_becomes_a_note(
+    media_type: str, payload: str, reason: str
+) -> None:
+    """Only a PNG or JPEG whose payload matches its media type is exported.
+
+    An HTML message embeds an image of an unsupported media type, a payload
+    that is not base64, or a payload of another format than its media type.
+    Outcome: a text record naming the size and the reason instead of an
+    image record.
+    """
+    with _make_listener() as listener:
+        listener.start_keyword(None, Result())
+        listener.log_message(
+            Message(f'<img src="data:{media_type};base64,{payload}">', html=True)
+        )
+
+    (item,) = listener.logs.get_finished_logs()
+    assert (
+        item.log_record.body == f"Screenshot of {len(payload)} bytes dropped ({reason})"
+    )
 
 
 def test_a_plain_text_message_is_never_an_image() -> None:
