@@ -34,6 +34,7 @@ Usage::
 
 """
 
+import base64
 import os
 import re
 from collections.abc import Generator, Mapping
@@ -84,10 +85,30 @@ _EMBEDDED_IMAGE: Final = re.compile(
 )
 
 
+# The leading bytes of each supported media type.
+_IMAGE_SIGNATURES: Final[Mapping[str, bytes]] = {
+    "image/png": b"\x89PNG\r\n\x1a\n",
+    "image/jpeg": b"\xff\xd8\xff",
+}
+
+
 @dataclass(frozen=True, slots=True)
 class _EmbeddedImage:
     media_type: str
     payload: str
+
+    def rejection_reason(self) -> str | None:
+        """Why the image cannot be exported, or None if it can."""
+        signature = _IMAGE_SIGNATURES.get(self.media_type)
+        if signature is None:
+            return f"unsupported media type {self.media_type}"
+        try:
+            image = base64.b64decode(self.payload, validate=True)
+        except ValueError:
+            return "payload is not base64"
+        if not image.startswith(signature):
+            return f"payload is not an {self.media_type} image"
+        return None
 
 
 @dataclass(frozen=True, slots=True)
@@ -395,6 +416,9 @@ class RobotmkListener:
             if size > self._max_image_size:
                 body = f"Screenshot of {size} bytes dropped (max_image_size {self._max_image_size})"
                 attributes: dict[str, AttributeValue] = {"rf.log.html": "false"}
+            elif reason := image.rejection_reason():
+                body = f"Screenshot of {size} bytes dropped ({reason})"
+                attributes = {"rf.log.html": "false"}
             elif self._image_total + size > self._max_image_size_total:
                 body = (
                     f"Screenshot of {size} bytes dropped "

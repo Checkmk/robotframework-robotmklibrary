@@ -50,6 +50,11 @@ every attempt of a plan.
 | `max_image_size` | 2 MiB | an embedded screenshot larger than this (base64 bytes) is dropped |
 | `max_image_size_total` | 8 MiB | embedded screenshots beyond this total per run are dropped |
 
+Only PNG and JPEG screenshots are exported, and only if the payload is base64
+of an image of the media type the data URI names. Any other embedded image is
+replaced by a note that names why it was dropped: an unsupported media type, a
+payload that is not base64, or a payload that is not an image of its media type.
+
 Robot Framework splits listener arguments at `:`, so use `;` as the separator
 whenever a value contains a colon:
 
